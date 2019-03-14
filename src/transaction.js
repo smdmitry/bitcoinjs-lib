@@ -192,7 +192,7 @@ Transaction.fromBuffer = function (buffer, network, __noStrict) {
   tx.network = network || networks.bitcoin
   tx.version = readInt32()
 
-  if (coins.isZcash(tx.network)) {
+  if (coins.isZcashLike(tx.network)) {
     var overwintered = tx.version >>> 31
     tx.version = tx.version & 0x7fffffff
     if (tx.version >= 3) {
@@ -213,7 +213,7 @@ Transaction.fromBuffer = function (buffer, network, __noStrict) {
   var flag = buffer.readUInt8(offset + 1)
 
   var hasWitnesses = false
-  if (!coins.isZcash(tx.network)) {
+  if (!coins.isZcashLike(tx.network)) {
     if (marker === Transaction.ADVANCED_TRANSACTION_MARKER &&
         flag === Transaction.ADVANCED_TRANSACTION_FLAG) {
       offset += 2
@@ -339,7 +339,7 @@ Transaction.fromBuffer = function (buffer, network, __noStrict) {
       tx.bindingSig = readSlice(64);
     }
   }
-  
+
 
   if (tx.isDashSpecialTransaction()) {
     tx.dashPayload = readVarSlice()
@@ -456,7 +456,7 @@ Transaction.prototype.outputDescsByteLength = function () {
 }
 
 Transaction.prototype.zcashTransactionByteLength = function() {
-  if (!coins.isZcash(this.network)) {
+  if (!coins.isZcashLike(this.network)) {
     throw new Error('zcashTransactionByteLength can only be called when using Zcash network')
   }
   var byteLength = 0
@@ -488,7 +488,7 @@ Transaction.prototype.zcashTransactionByteLength = function() {
 }
 
 Transaction.prototype.__byteLength = function (__allowWitness) {
-  if (coins.isZcash(this.network)) {
+  if (coins.isZcashLike(this.network)) {
     return this.zcashTransactionByteLength();
   }
 
@@ -516,7 +516,7 @@ Transaction.prototype.clone = function () {
   newTx.dashType = this.dashType
   newTx.dashPayload = this.dashPayload
   newTx.invalidTransaction = this.invalidTransaction
-  if (coins.isZcash(newTx.network)) {
+  if (coins.isZcashLike(newTx.network)) {
     newTx.versionGroupId = this.versionGroupId
     newTx.expiry = this.expiry
   }
@@ -1010,19 +1010,19 @@ Transaction.prototype.getExtraData = function () {
 }
 
 Transaction.prototype.isZcashTransaction = function () {
-  return coins.isZcash(this.network)
+  return coins.isZcashLike(this.network)
 }
 
 Transaction.prototype.isSaplingCompatible = function () {
-  return coins.isZcash(this.network) && this.version >= Transaction.ZCASH_SAPLING_VERSION
+  return coins.isZcashLike(this.network) && this.version >= Transaction.ZCASH_SAPLING_VERSION
 }
 
 Transaction.prototype.isOverwinterCompatible = function () {
-  return coins.isZcash(this.network) && this.version >= Transaction.ZCASH_OVERWINTER_VERSION
+  return coins.isZcashLike(this.network) && this.version >= Transaction.ZCASH_OVERWINTER_VERSION
 }
 
 Transaction.prototype.supportsJoinSplits = function () {
-  return coins.isZcash(this.network) && this.version >= Transaction.ZCASH_JOINSPLITS_SUPPORT_VERSION
+  return coins.isZcashLike(this.network) && this.version >= Transaction.ZCASH_JOINSPLITS_SUPPORT_VERSION
 }
 
 Transaction.prototype.isDashSpecialTransaction = function () {

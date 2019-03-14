@@ -8,6 +8,7 @@ const coins = {
   BTG: 'btg',
   LTC: 'ltc',
   ZEC: 'zec',
+  KMD: 'kmd',
   DASH: 'dash',
   DIGIBYTE: 'dgb',
   DOGECOIN: 'doge',
@@ -36,8 +37,16 @@ coins.isLitecoin = function (network) {
   return typeforce.value(coins.LTC)(network.coin)
 }
 
+coins.isZcashLike = function (network) {
+    return coins.isZcash(network) || coins.isKomodo(network)
+}
+
 coins.isZcash = function (network) {
   return typeforce.value(coins.ZEC)(network.coin)
+}
+
+coins.isKomodo = function (network) {
+    return typeforce.value(coins.KMD)(network.coin)
 }
 
 coins.isDash = function (network) {
@@ -54,7 +63,9 @@ coins.isValidCoin = typeforce.oneOf(
   coins.isBitcoinSV,
   coins.isBitcoinGold,
   coins.isLitecoin,
+  coins.isZcashLike,
   coins.isZcash,
+  coins.isKomodo,
   coins.isDash,
   coins.isCapricoin
 )
